@@ -1,14 +1,8 @@
-"""
-Sistemas Operacionais I - Projeto 01
-Algoritmos de Escalonamento de CPU: FCFS, SJF e Round Robin
-"""
-
 import sys
 from collections import deque
 
 
 class Processo:
-    """Representa um processo no sistema."""
     
     def __init__(self, pid, tempo_chegada, duracao):
         self.pid = pid
@@ -19,20 +13,16 @@ class Processo:
         self.tempo_fim = None
     
     def tempo_retorno(self):
-        """Tempo total desde chegada até conclusão."""
         return self.tempo_fim - self.tempo_chegada if self.tempo_fim else 0
     
     def tempo_resposta(self):
-        """Tempo desde chegada até primeira execução."""
         return self.tempo_inicio - self.tempo_chegada if self.tempo_inicio else 0
     
     def tempo_espera(self):
-        """Tempo total aguardando na fila."""
         return self.tempo_retorno() - self.duracao
 
 
 def ler_entrada(arquivo):
-    """Lê processos de um arquivo."""
     processos = []
     pid = 0
     with open(arquivo, 'r') as f:
@@ -48,8 +38,7 @@ def ler_entrada(arquivo):
     return processos
 
 
-def calcular_metricas(processos):
-    """Calcula as métricas médias."""
+def calcular_medias(processos):
     n = len(processos)
     if n == 0:
         return 0.0, 0.0, 0.0
@@ -62,7 +51,6 @@ def calcular_metricas(processos):
 
 
 def fcfs(processos):
-    """First-Come, First-Served - executa na ordem de chegada."""
     procs = [Processo(p.pid, p.tempo_chegada, p.duracao) for p in processos]
     procs.sort(key=lambda p: (p.tempo_chegada, p.pid))
     
@@ -74,11 +62,10 @@ def fcfs(processos):
         tempo += p.duracao
         p.tempo_fim = tempo
     
-    return calcular_metricas(procs)
+    return calcular_medias(procs)
 
 
 def sjf(processos):
-    """Shortest Job First - menor duração primeiro."""
     procs = [Processo(p.pid, p.tempo_chegada, p.duracao) for p in processos]
     completos = []
     tempo = 0
@@ -98,11 +85,10 @@ def sjf(processos):
         escolhido.tempo_fim = tempo
         completos.append(escolhido)
     
-    return calcular_metricas(completos)
+    return calcular_medias(completos)
 
 
 def round_robin(processos, quantum=2):
-    """Round Robin - cada processo executa por um quantum de tempo."""
     procs = [Processo(p.pid, p.tempo_chegada, p.duracao) for p in processos]
     procs.sort(key=lambda p: (p.tempo_chegada, p.pid))
     
@@ -153,11 +139,10 @@ def round_robin(processos, quantum=2):
             fila.append(atual)
             atual = None
     
-    return calcular_metricas(completos)
+    return calcular_medias(completos)
 
 
 def formatar_saida(algoritmo, retorno, resposta, espera):
-    """Formata a saída com vírgula como separador decimal."""
     return f"{algoritmo}: {retorno:.1f} {resposta:.1f} {espera:.1f}".replace('.', ',')
 
 
