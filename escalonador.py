@@ -18,20 +18,17 @@ class Processo:
         self.tempo_inicio = None
         self.tempo_fim = None
     
-    @property
     def tempo_retorno(self):
         """Tempo total desde chegada até conclusão."""
         return self.tempo_fim - self.tempo_chegada if self.tempo_fim else 0
     
-    @property
     def tempo_resposta(self):
         """Tempo desde chegada até primeira execução."""
         return self.tempo_inicio - self.tempo_chegada if self.tempo_inicio else 0
     
-    @property
     def tempo_espera(self):
         """Tempo total aguardando na fila."""
-        return self.tempo_retorno - self.duracao
+        return self.tempo_retorno() - self.duracao
 
 
 def ler_entrada(arquivo):
@@ -57,9 +54,9 @@ def calcular_metricas(processos):
     if n == 0:
         return 0.0, 0.0, 0.0
     
-    retorno = sum(p.tempo_retorno for p in processos) / n
-    resposta = sum(p.tempo_resposta for p in processos) / n
-    espera = sum(p.tempo_espera for p in processos) / n
+    retorno = sum(p.tempo_retorno() for p in processos) / n
+    resposta = sum(p.tempo_resposta() for p in processos) / n
+    espera = sum(p.tempo_espera() for p in processos) / n
     
     return retorno, resposta, espera
 
