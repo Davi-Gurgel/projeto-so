@@ -34,19 +34,20 @@ class Processo:
         return self.tempo_retorno - self.duracao
 
 
-def ler_entrada():
-    """Lê processos da entrada padrão."""
+def ler_entrada(arquivo):
+    """Lê processos de um arquivo."""
     processos = []
     pid = 0
-    for linha in sys.stdin:
-        linha = linha.strip()
-        if linha:
-            partes = linha.split()
-            if len(partes) >= 2:
-                chegada = int(partes[0])
-                duracao = int(partes[1])
-                processos.append(Processo(pid, chegada, duracao))
-                pid += 1
+    with open(arquivo, 'r') as f:
+        for linha in f:
+            linha = linha.strip()
+            if linha:
+                partes = linha.split()
+                if len(partes) >= 2:
+                    chegada = int(partes[0])
+                    duracao = int(partes[1])
+                    processos.append(Processo(pid, chegada, duracao))
+                    pid += 1
     return processos
 
 
@@ -164,7 +165,13 @@ def formatar_saida(algoritmo, retorno, resposta, espera):
 
 
 def main():
-    processos = ler_entrada()
+    if len(sys.argv) < 2:
+        print("Uso: python escalonador.py <arquivo_de_teste>")
+        print("Exemplo: python escalonador.py test_input1.txt")
+        return
+    
+    arquivo = sys.argv[1]
+    processos = ler_entrada(arquivo)
     
     if not processos:
         return
